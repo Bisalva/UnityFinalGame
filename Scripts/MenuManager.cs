@@ -12,4 +12,9 @@ public class MenuManager : MonoBehaviour
     }
 
 
+    public void _quit()
+    {
+        Application.Quit(); 
+    }
+
 }

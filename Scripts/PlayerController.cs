@@ -18,7 +18,7 @@ public class PlayerController : MonoBehaviour
     public Transform groundCheck;
     public float groundCheckRadius = 0.1f;
     private bool TouchGround;
-    
+
 
     private Rigidbody2D Rigidbody;
     private BoxCollider2D BoxCollider;
@@ -38,6 +38,7 @@ public class PlayerController : MonoBehaviour
     {
         _Movement();
         _Jump();
+        _Shoot();
 
     }
     void _Movement()
@@ -113,7 +114,14 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-
+    void _Shoot()
+    {
+        if (Input.GetKeyDown(KeyCode.J))
+        {
+            GameManager.Instance._shootArrow();
+            
+        }
+    }
 
 
 }
