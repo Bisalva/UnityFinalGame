@@ -75,9 +75,4 @@ public class Arrow : MonoBehaviour
         }
     }
 
-
-    public void _showArrowsUI()
-    {
-        
-    }
 }

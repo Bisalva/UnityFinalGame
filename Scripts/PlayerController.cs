@@ -1,9 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
+
 
 public class PlayerController : MonoBehaviour
 {
+
+    public Transform shootPoint;
+    public GameObject arrowPrefab;
 
     public float speedChar = 10f;
     public float jumpForce = 10f;
@@ -20,7 +25,7 @@ public class PlayerController : MonoBehaviour
     private bool TouchGround;
 
 
-    private Rigidbody2D Rigidbody;
+    private Rigidbody2D RB;
     private BoxCollider2D BoxCollider;
     private Animator Animator;
 
@@ -28,7 +33,7 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
-        Rigidbody = GetComponent<Rigidbody2D>();
+        RB = GetComponent<Rigidbody2D>();
         BoxCollider = GetComponent<BoxCollider2D>();
         Animator = GetComponent<Animator>();
 
@@ -36,16 +41,24 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        _Movement();
-        _Jump();
-        _Shoot();
+        if (GameManager.Instance._getAlive() == true)
+        {
+            _Movement();
+            _Jump();
+            _Shoot();
+        }
+        else
+        {
+            _Death();
+
+        }
 
     }
     void _Movement()
     {
         //Movement in X
         playerInput_X = Input.GetAxis("Horizontal"); // -1 & 1 values
-        verticalVelocity = Rigidbody.velocity.y;
+        verticalVelocity = RB.velocity.y;
 
         if (playerInput_X != 0)
         {
@@ -56,7 +69,7 @@ public class PlayerController : MonoBehaviour
             Animator.SetBool("isRunning", false);
         }
 
-        Rigidbody.velocity = new Vector2(playerInput_X * speedChar, Rigidbody.velocity.y);
+        RB.velocity = new Vector2(playerInput_X * speedChar, RB.velocity.y);
         TouchGround = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, Ground);
 
 
@@ -89,8 +102,9 @@ public class PlayerController : MonoBehaviour
     {
         if ((Orientation && playerInput_X < 0) || (!Orientation && playerInput_X > 0))
         {
+
             Orientation = !Orientation;
-            transform.localScale = new Vector2(-transform.localScale.x, transform.localScale.y);
+            transform.Rotate(0, 180, 0);
         }
     }
 
@@ -105,7 +119,7 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.W) && _OnGround())
         {
-            Rigidbody.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+            RB.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
             inAir = true;
         }
         else
@@ -118,8 +132,31 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.J))
         {
+            Animator.SetTrigger("isShooting");
             GameManager.Instance._shootArrow();
-            
+
+            Instantiate(arrowPrefab, shootPoint.position,transform.rotation);
+
+        }
+    }
+
+    void _Death()
+    {
+        if (GameManager.Instance._getAlive() == false)
+        {
+            Animator.SetTrigger("isDead");
+            BoxCollider.size = new Vector2(0.21f, 0.10f);
+            gameObject.layer = LayerMask.NameToLayer("Dead");
+        }
+    }
+
+
+
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.gameObject.CompareTag("Enemy") && GameManager.Instance._IsTakingDamage() == true)
+        {
+            GameManager.Instance._TakingDamageStatusChange();
         }
     }
 
