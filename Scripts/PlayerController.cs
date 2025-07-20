@@ -28,6 +28,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D RB;
     private BoxCollider2D BoxCollider;
     private Animator Animator;
+    public GameObject Character;
 
 
 
@@ -36,16 +37,19 @@ public class PlayerController : MonoBehaviour
         RB = GetComponent<Rigidbody2D>();
         BoxCollider = GetComponent<BoxCollider2D>();
         Animator = GetComponent<Animator>();
+        GameManager.Instance._useKeyInBag();
 
     }
 
     void Update()
     {
+
         if (GameManager.Instance._getAlive() == true)
         {
             _Movement();
             _Jump();
             _Shoot();
+            GameManager.Instance._timer();
         }
         else
         {
@@ -130,7 +134,7 @@ public class PlayerController : MonoBehaviour
 
     void _Shoot()
     {
-        if (Input.GetKeyDown(KeyCode.J))
+        if (Input.GetKeyDown(KeyCode.J) && (GameManager.Instance._getArrowsAmount() != 0))
         {
             Animator.SetTrigger("isShooting");
             GameManager.Instance._shootArrow();
@@ -146,7 +150,9 @@ public class PlayerController : MonoBehaviour
         {
             Animator.SetTrigger("isDead");
             BoxCollider.size = new Vector2(0.21f, 0.10f);
+            Character.GetComponent<PlayerController>().enabled = false;
             gameObject.layer = LayerMask.NameToLayer("Dead");
+            GameManager.Instance._LevelReset();
         }
     }
 

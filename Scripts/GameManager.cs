@@ -1,16 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using TMPro;
+
 
 public class GameManager : MonoBehaviour
 {
 
     public static GameManager Instance { get; private set; }
+    public TMP_Text screenTextTimer;
+
+
     private float lifeBar = 100;
     private int arrows = 5;
     private bool key = false;
     private bool takingDamage = false;
     private bool lifeStatus = true;
+    private bool inDoor = false;
+    private float timerCount = 300;
+    
 
 
 
@@ -19,6 +28,11 @@ public class GameManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
         }
 
     }
@@ -50,11 +64,24 @@ public class GameManager : MonoBehaviour
         return takingDamage;
     }
 
+    public void _LevelReset()
+    {
+
+        StartCoroutine(_ResetDelay());
+        _fullLife();
+    }
+
     public void _potionTaken(int Potion)
     {
 
         lifeBar += Potion;
-        Debug.Log("vida : " + lifeBar);
+    }
+    public void _fullLife()
+    {
+        lifeBar = 100;
+        lifeStatus = true;
+        arrows = 5;
+        timerCount = 300;
     }
 
     public void _takeArrow()
@@ -85,6 +112,55 @@ public class GameManager : MonoBehaviour
     public void _getKeyInBag()
     {
         key = true;
+    }
+
+    public void _useKeyInBag()
+    {
+        key = false;
+    }
+
+    public void _IsInDoor()
+    {
+        inDoor = true;
+
+    }
+    public bool _getInDoor()
+    {
+        return inDoor;
+    }
+
+
+    public void _timer()
+    {
+
+        timerCount -= Time.deltaTime;
+        screenTextTimer.text = timerCount.ToString("F0"); 
+        if (timerCount <= 0)
+        {
+            lifeStatus = false;
+        }
+
+    }
+
+
+
+
+
+
+    IEnumerator _ResetDelay()
+    {
+        yield return new WaitForSeconds(2f);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    IEnumerator _DelayOP()
+    {
+        yield return new WaitForSeconds(2f);
+    }
+
+    public void _DelayGeneral()
+    {
+        StartCoroutine(_DelayOP());
     }
 
 }
