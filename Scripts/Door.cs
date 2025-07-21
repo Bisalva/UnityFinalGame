@@ -32,8 +32,6 @@ public class Door : MonoBehaviour
     IEnumerator _NextLevel()
     {
         GameManager.Instance._IsInDoor();
-        Character.GetComponent<PlayerController>().enabled = false;
-
 
         screenText.text = "¡NIVEL COMPLETADO!";
         screenText.enabled = true;

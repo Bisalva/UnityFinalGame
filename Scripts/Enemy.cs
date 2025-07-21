@@ -5,6 +5,9 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
 
+    //Sound
+    [SerializeField] private AudioClip DamageSoundPlayer;
+
     //LIFES
     public int lifes;
     private bool LifeStatus = true;
@@ -42,6 +45,7 @@ public class Enemy : MonoBehaviour
         if (gameObject.tag == "BeeEnemy")
         {
             canShoot = true;
+
         }
 
     }
@@ -53,13 +57,12 @@ public class Enemy : MonoBehaviour
         {
             _MovementEnemy();
 
-        if (Time.time >= nextFireTime && canShoot == true)
-        {
-            _ShootEnemy();
-            nextFireTime = Time.time + fireRate;
-        }
+            if (Time.time >= nextFireTime && canShoot == true)
+            {
+                _ShootEnemy();
+                nextFireTime = Time.time + fireRate;
+            }
 
-            
         }
 
     }
@@ -121,7 +124,7 @@ public class Enemy : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
-
+            SoundManager.Instance._PlaySound(DamageSoundPlayer);
             GameManager.Instance._damageTaken(20);
         }
 
@@ -140,6 +143,7 @@ public class Enemy : MonoBehaviour
                 distance = 0;
 
                 Animator.SetBool("isDeadE", true);
+                gameObject.layer = LayerMask.NameToLayer("DeadEnemies");
                 Instantiate(LootItem, transform.position, Quaternion.identity);
                 Destroy(gameObject, 1f);
 
@@ -148,6 +152,7 @@ public class Enemy : MonoBehaviour
             {
                 distance = 0;
                 Animator.SetBool("isDead", true);
+                gameObject.layer = LayerMask.NameToLayer("DeadEnemies");
                 Destroy(gameObject, 1f);
 
             }

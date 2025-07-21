@@ -66,13 +66,6 @@ public class Arrow : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Player") && (GameManager.Instance._getArrowsAmount() < 5))
-        {
-            Destroy(gameObject);
-            GameManager.Instance._takeArrow();
-        }
-    }
+    
 
 }

@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 
 public class MenuManager : MonoBehaviour
 {
+    [SerializeField] private AudioClip MenuSound;
 
     public Button[] buttons;
     private int currentButton = 0;
@@ -14,6 +15,8 @@ public class MenuManager : MonoBehaviour
     void Start()
     {
         SelectButton(currentButton);
+        SoundManager.Instance._PlayMusic(MenuSound);
+
     }
 
     void Update()
@@ -44,15 +47,32 @@ public class MenuManager : MonoBehaviour
         EventSystem.current.SetSelectedGameObject(buttons[index].gameObject);
     }
 
-    public void _play()
+    public void _playLevel1()
     {
         SceneManager.LoadSceneAsync(1);
+        SoundManager.Instance._StopMusic();
     }
+
+    public void _playLevel2()
+    {
+        SceneManager.LoadSceneAsync(2);
+        SoundManager.Instance._StopMusic();
+
+    }
+
+    public void _playLevel3()
+    {
+        SceneManager.LoadSceneAsync(3);
+        SoundManager.Instance._StopMusic();
+
+    }
+    
+
 
 
     public void _quit()
     {
-        Application.Quit(); 
+        Application.Quit();
     }
 
 }

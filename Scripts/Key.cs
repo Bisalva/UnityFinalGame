@@ -5,6 +5,7 @@ using UnityEngine;
 public class KeyManager : MonoBehaviour
 {
 
+    [SerializeField] private AudioClip KeySound;
     public GameObject KeyUI;
     private bool KeyInBag;
     void Start()
@@ -29,6 +30,7 @@ public class KeyManager : MonoBehaviour
     {
         if (collision.CompareTag("Player") && (GameManager.Instance._getKeyStatus() == false))
         {
+            SoundManager.Instance._PlaySound(KeySound);
             Destroy(gameObject);
             GameManager.Instance._getKeyInBag();
         }

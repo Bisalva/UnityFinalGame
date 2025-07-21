@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-
+    [SerializeField] private AudioClip DeadSound;    
     public Transform shootPoint;
     public GameObject arrowPrefab;
 
@@ -32,12 +32,16 @@ public class PlayerController : MonoBehaviour
 
 
 
+
+
     void Start()
     {
         RB = GetComponent<Rigidbody2D>();
         BoxCollider = GetComponent<BoxCollider2D>();
         Animator = GetComponent<Animator>();
         GameManager.Instance._useKeyInBag();
+        GameManager.Instance._CheckScene();
+        GameManager.Instance._DoorNextLevel();
 
     }
 
@@ -49,6 +53,8 @@ public class PlayerController : MonoBehaviour
             _Movement();
             _Jump();
             _Shoot();
+            _InDoorAnimation();
+            
             GameManager.Instance._timer();
         }
         else
@@ -149,15 +155,28 @@ public class PlayerController : MonoBehaviour
     {
         if (GameManager.Instance._getAlive() == false)
         {
+            SoundManager.Instance._PlaySound(DeadSound);
             Animator.SetTrigger("isDead");
             BoxCollider.size = new Vector2(0.21f, 0.10f);
-            Character.GetComponent<PlayerController>().enabled = false;
             gameObject.layer = LayerMask.NameToLayer("Dead");
+            RB.mass = 10000f;
+            Character.GetComponent<PlayerController>().enabled = false;
+
             GameManager.Instance._LevelReset();
         }
     }
 
-
+    public void _InDoorAnimation()
+    {
+        if (GameManager.Instance._getInDoor())
+        {
+            RB.velocity = Vector2.zero;
+            gameObject.layer = LayerMask.NameToLayer("Dead");
+            Animator.SetTrigger("isInDoor");    
+            Character.GetComponent<PlayerController>().enabled = false;
+        }
+        
+    }
 
     private void OnCollisionEnter2D(Collision2D other)
     {

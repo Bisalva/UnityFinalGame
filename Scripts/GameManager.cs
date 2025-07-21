@@ -9,6 +9,12 @@ public class GameManager : MonoBehaviour
 {
 
     public static GameManager Instance { get; private set; }
+    [SerializeField] private AudioClip Scene1Sound;
+    [SerializeField] private AudioClip Scene2Sound;
+    [SerializeField] private AudioClip Scene3Sound;
+    [SerializeField] private AudioClip DeadMusic;
+    [SerializeField] private AudioClip VictoryMusic;
+
     public TMP_Text screenTextTimer;
 
 
@@ -45,6 +51,7 @@ public class GameManager : MonoBehaviour
         if (lifeBar <= 0)
         {
             lifeStatus = false;
+
         }
 
     }
@@ -66,9 +73,10 @@ public class GameManager : MonoBehaviour
 
     public void _LevelReset()
     {
-
+        SoundManager.Instance._PlayMusic(DeadMusic);
         StartCoroutine(_ResetDelay());
         _fullLife();
+
     }
 
     public void _potionTaken(int Potion)
@@ -122,7 +130,12 @@ public class GameManager : MonoBehaviour
     public void _IsInDoor()
     {
         inDoor = true;
+        SoundManager.Instance._PlayMusic(VictoryMusic);
 
+    }
+    public void _DoorNextLevel()
+    {
+        inDoor = false;
     }
     public bool _getInDoor()
     {
@@ -142,14 +155,31 @@ public class GameManager : MonoBehaviour
 
     }
 
+    public void _CheckScene()
+    {
+        if (SceneManager.GetActiveScene().buildIndex == 1)
+        {
+            _MusicScene(Scene1Sound);
+        }
+        else if (SceneManager.GetActiveScene().buildIndex == 2)
+        {
+            _MusicScene(Scene2Sound);
+        }
+        else if (SceneManager.GetActiveScene().buildIndex == 3)
+        {
+            _MusicScene(Scene3Sound);
+        }
+    
+    }
 
-
-
-
+    public void _MusicScene(AudioClip SceneMusic)
+    {
+        SoundManager.Instance._PlayMusic(SceneMusic);
+    }
 
     IEnumerator _ResetDelay()
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(5f);
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
