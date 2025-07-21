@@ -7,6 +7,7 @@ public class Enemy : MonoBehaviour
 
     //LIFES
     public int lifes;
+    private bool LifeStatus = true;
     public GameObject hitParticles;
 
     //-----
@@ -17,15 +18,53 @@ public class Enemy : MonoBehaviour
     public int distance;
     public int speedEnemy;
     public bool orientation;
+    private Animator Animator;
     //-----
 
+    //LOOT
+    public GameObject LootItem;
+    //----
+
+    //Shot (Only Bee)
+    public GameObject StingPrefab;
+    private Transform Character;
+    public int speedSting;
+    public float fireRate = 2f;
+    private float nextFireTime = 0f;
+    private bool canShoot = false;
+    //----
 
     void Start()
     {
         initialPosition = transform.position;
+        Animator = GetComponent<Animator>();
+        Character = GameObject.FindGameObjectWithTag("Player").transform;
+        if (gameObject.tag == "BeeEnemy")
+        {
+            canShoot = true;
+        }
+
     }
 
     void Update()
+    {
+
+        if (LifeStatus)
+        {
+            _MovementEnemy();
+
+        if (Time.time >= nextFireTime && canShoot == true)
+        {
+            _ShootEnemy();
+            nextFireTime = Time.time + fireRate;
+        }
+
+            
+        }
+
+    }
+
+    public void _MovementEnemy()
     {
         if (orientation)
         {
@@ -95,7 +134,37 @@ public class Enemy : MonoBehaviour
 
         if (lifes <= 0)
         {
-            Destroy(gameObject);
+            LifeStatus = false;
+            if (gameObject.tag == "Boss")
+            {
+                distance = 0;
+
+                Animator.SetBool("isDeadE", true);
+                Instantiate(LootItem, transform.position, Quaternion.identity);
+                Destroy(gameObject, 1f);
+
+            }
+            else
+            {
+                distance = 0;
+                Animator.SetBool("isDead", true);
+                Destroy(gameObject, 1f);
+
+            }
         }
     }
+
+    public void _ShootEnemy()
+    {
+        GameObject Sting = Instantiate(StingPrefab, transform.position, Quaternion.identity);
+
+        Vector2 direction = (Character.position - transform.position).normalized;
+
+        Sting.GetComponent<Rigidbody2D>().AddForce(direction * speedSting, ForceMode2D.Impulse);
+
+        Destroy(Sting, 5f);
+
+    }
+
+
 }

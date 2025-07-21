@@ -153,14 +153,4 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
-    IEnumerator _DelayOP()
-    {
-        yield return new WaitForSeconds(2f);
-    }
-
-    public void _DelayGeneral()
-    {
-        StartCoroutine(_DelayOP());
-    }
-
 }

@@ -64,6 +64,7 @@ public class PlayerController : MonoBehaviour
         playerInput_X = Input.GetAxis("Horizontal"); // -1 & 1 values
         verticalVelocity = RB.velocity.y;
 
+
         if (playerInput_X != 0)
         {
             Animator.SetBool("isRunning", true);
